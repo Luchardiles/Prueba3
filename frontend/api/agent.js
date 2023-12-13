@@ -16,6 +16,7 @@ const requests = {
     create: () =>
       requests.post('posts', {  }),
     list: () => requests.get('posts'),
+    comments:(id)=>requests.get(`posts/${id}/comments`),
     delete: (id) => requests.delete(`posts/${id}`),
     update: (id) => requests.put(`posts/${id}`),
   };

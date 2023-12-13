@@ -1,23 +1,31 @@
 import * as React from "react";
-import { Card, Text, Modal, Portal,IconButton,TextInput,DeleteIcon, } from "react-native-paper";
+import { Card, Text, Modal, Portal,IconButton,TextInput,DeleteIcon, Button, } from "react-native-paper";
 import { StyleSheet, Pressable, Image ,TouchableOpacity} from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import agent from "../api/agent";
+import { useState, useEffect } from "react";
 
-const Cards = ({ title, description, url,currentproduct,handleClickUpdate }) => {
+const defaultcomment = {
+    "id": 0,
+    "body": "",
+    "postId": 0,
+  };
+const Cards = ({ title, author, url,currentpost,handleClickUpdate }) => {
   const [visible, setVisible] = React.useState(false);
-  const [editVisible, setEditVisible] = React.useState(false);
   const [deleteVisible, setDeleteVisible] = React.useState(false);
-  const [product, setProduct] = React.useState(currentproduct);
+  const [post, setPost] = React.useState(currentpost);
+  const [comments, setComments] = React.useState([]);
+
+  useEffect(() => {
+    agent.Post.comments(currentpost.id).then((data) => {
+      setComments(data);
+    });
+  }, []);
 
   const showModal = () => {setVisible(true);
 }
-  const showEditModal = () => {
-    setProduct(currentproduct);
-    setEditVisible(true);
-    
-};
 const showDeleteModal = () => {
-    setProduct(currentproduct);
+    setPost(currentpost);
     setDeleteVisible(true);
     
 };
@@ -25,17 +33,11 @@ const showDeleteModal = () => {
   }
   const hideDeleteModal = () => {setDeleteVisible(false);
   }
-  const hideEditModal = () => {setEditVisible(false);
-  }
-
-  const handleProductChange = (id, value) => {
-    setProduct({ ...product, [id]: value });
-  };
 
   const handleOnSubmit = () => {
-    handleClickUpdate(product);
     hideEditModal();
   };
+
 
 
 
@@ -59,17 +61,39 @@ const showDeleteModal = () => {
           />
         </Modal>
       </Portal>
+      <Portal>
+        <Modal
+          visible={deleteVisible}
+          onDismiss={hideDeleteModal}
+          contentContainerStyle={containerStyle}
+        >
+        <Text variant="bodyMedium">¿Estas Seguro?</Text>
+        </Modal>
+      </Portal>
       <Pressable onPress={showModal}>
         <Card.Cover style={styles.image} source={{ uri: url }} />
       </Pressable>
       <Card.Content>
-        <Text variant="bodyMedium">Precio:${description}</Text>
+        <Text variant="bodyMedium">Author: {author}</Text>
+      </Card.Content>
+      <Card.Content>
+      {comments.map((comment) => (
+                <Card.Content>
+                    <Text variant="bodyMedium">{comment.body}</Text>
+                </Card.Content>
+            ))}
+      </Card.Content>
+      <Card.Content>
+      <IconButton
+         icon={() => <MaterialCommunityIcons name="delete" size={20} color="red" />} 
+         onPress={showDeleteModal}
+        />
       </Card.Content>
     </Card>
   );
 };
 
-export default ImageCard;
+export default Cards;
 
 const styles = StyleSheet.create({
   container: {

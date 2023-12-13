@@ -18,28 +18,14 @@ export default function App() {
 
 
   useEffect(() => {
-    agent.Product.list().then((data) => {
-      setProducts(data);
+    agent.Post.list().then((data) => {
+      setPosts(data);
     });
   }, []);
 
-  const handleClickUpdateProduct = (updatedProduct) => {
-    agent.Product.update(updatedProduct.id,updatedProduct.name,updatedProduct.image,updatedProduct.description,updatedProduct.price,updatedProduct.quantity,updatedProduct.status).then((response) => {
-      setProducts((prevProduct) =>
-        prevProduct.map((product) =>
-          product.id === updatedProduct.id
-            ? { ...product, ...updatedProduct }
-            : product
-        )
-      );
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-    
+  
 
-  };
+ 
 
 
   return (
@@ -47,14 +33,14 @@ export default function App() {
       <PaperProvider>
         <SafeAreaView style={styles.container}>
           <ScrollView>
-            {products.map((product) => (
-              <ProductTable 
-                key={product.id}
-                title={product.name}
-                description={product.price}
-                url={product.image}
-                currentproduct={product}
-                handleClickUpdate={handleClickUpdateProduct}
+            {posts.map((post) => (
+              <Cards
+                key={post.id}
+                title={post.title}
+                author={post.author}
+                url={post.image}
+                currentpost={post}
+           //     handleClickUpdate={handleClickUpdateProduct}
               />
             ))}
           </ScrollView>
