@@ -35,9 +35,20 @@ const showDeleteModal = () => {
   }
 
   const handleOnSubmit = () => {
-    hideEditModal();
+    hideDeleteModal();
+    handleDelete(currentpost);
   };
 
+  const handleDelete = (currentpost) => {
+    agent.Post.delete(currentpost.id).then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    
+
+  };
 
 
 
